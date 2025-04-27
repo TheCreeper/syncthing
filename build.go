@@ -510,10 +510,17 @@ func build(target target, tags []string) {
 	runPrint(goCmd, args...)
 }
 
+var cflags = []string{
+	// Disable the double-quoted string literal misfeature in SQLite.
+	// https://www.sqlite.org/compile.html#recommended_compile_time_options
+	"-DSQLITE_DQS=0",
+}
+
 func setBuildEnvVars() {
 	os.Setenv("GOOS", goos)
 	os.Setenv("GOARCH", goarch)
 	os.Setenv("CC", cc)
+	os.Setenv("CGO_CFLAGS", strings.Join(cflags, " "))
 }
 
 func appendParameters(args []string, tags []string, pkgs ...string) []string {
